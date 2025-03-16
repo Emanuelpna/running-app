@@ -3,6 +3,7 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 
 import * as Location from "expo-location";
+
 import store from "../../../storage/storage";
 
 export default function Index() {
@@ -20,38 +21,16 @@ export default function Index() {
 
       await Location.requestBackgroundPermissionsAsync();
 
-      const location = await Location.getCurrentPositionAsync({});
+      const location = await Location.getCurrentPositionAsync();
       setLocation({
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
         latitudeDelta: 0.002,
         longitudeDelta: 0.002,
       });
     }
 
     getCurrentLocation();
-  }, []);
-
-  useEffect(() => {
-    async function getCurrentLocation() {
-      const location = await Location.getCurrentPositionAsync();
-      console.log(location);
-
-      // saveLocationToDatabse()
-      await store.save("location", location);
-      const teste = await store.get("location");
-      console.log(teste);
-
-
-      // getLocationToDatabse()
-
-
-
-    }
-
-    setInterval(() => {
-      getCurrentLocation();
-    }, 1000);
   }, []);
 
   if (location === null) return null;
