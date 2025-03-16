@@ -3,6 +3,7 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 
 import * as Location from "expo-location";
+import store from "../../../storage/storage";
 
 export default function Index() {
   const [location, setLocation] = useState(null);
@@ -37,8 +38,15 @@ export default function Index() {
       console.log(location);
 
       // saveLocationToDatabse()
+      await store.save("location", location);
+      const teste = await store.get("location");
+      console.log(teste);
+
 
       // getLocationToDatabse()
+
+
+
     }
 
     setInterval(() => {
