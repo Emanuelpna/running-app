@@ -38,10 +38,13 @@ export default function Index() {
       console.log(location);
 
       // saveLocationToDatabse()
-      store.save("location", location);
+      await store.save("location", location);
+      const teste = await store.get("location");
+      console.log(teste);
+
 
       // getLocationToDatabse()
-      store.get("location")
+
 
 
     }

@@ -26,14 +26,14 @@ const store = {
      * @param  {Any} value The value to save
      * @return {Promise}
      */
-    save(key, value) {
+    async save(key, value) {
         if(!Array.isArray(key)) {
-            return AsyncStorage.setItem(key, JSON.stringify(value));
+            return await AsyncStorage.setItem(key, JSON.stringify(value));
         } else {
             var pairs = key.map(function(pair) {
                 return [pair[0], JSON.stringify(pair[1])];
             });
-            return AsyncStorage.multiSet(pairs);
+            return await AsyncStorage.multiSet(pairs);
         }
     },
 
