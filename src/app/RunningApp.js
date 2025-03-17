@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import store from '../storage/storage'
 import MapView, { Polyline } from 'react-native-maps';
 
 const RunningApp = () => {
   const [coordinates, setCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
   const loadCoordinates = async () => {
     try {
-      const data = await AsyncStorage.getItem('coordinates');
+      const data = await store.get('coordinates');
       if (data !== null) {
-
-        const parsedData = JSON.parse(data);
-        setCoordinates(parsedData);
+        setCoordinates(data);
       } else {
         Alert.alert('Nenhuma coordenada encontrada', 'Verifique se você já armazenou algum trajeto.');
       }
@@ -29,7 +26,6 @@ const RunningApp = () => {
     loadCoordinates();
   }, []);
 
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -37,7 +33,6 @@ const RunningApp = () => {
       </View>
     );
   }
-
 
   const initialRegion = coordinates.length > 0 ? {
     latitude: coordinates[0].latitude,
