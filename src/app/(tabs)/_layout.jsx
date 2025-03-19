@@ -3,7 +3,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function TabLayout() {
   return (
-    <Tabs>
+    <Tabs initialRouteName="(home)/index">
       <Tabs.Screen
         name="(home)/index"
         options={{
@@ -13,7 +13,16 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen name="settings" /> */}
+      <Tabs.Screen
+        name="(coords)/index"
+        options={{
+          lazy: true,
+          title: "Coordinates",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={28} name="map-marker" color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

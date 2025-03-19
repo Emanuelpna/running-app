@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.emanuelpna.runningapp"
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +34,14 @@
           "backgroundColor": "#ffffff"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "18a1d64e-976d-4ce3-b1a1-b838adc98cda"
+      }
+    }
   }
 }
