@@ -1,6 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const store = {
+const LocalDatabase = {
+  /**
+  * Get all keys in AsyncStorage.
+  * @return {Promise} A promise which when it resolves gets passed the saved keys in AsyncStorage.
+  */
+  keys() {
+    return AsyncStorage.getAllKeys();
+  },
+
+  async hasKey(key) {
+    const item = await AsyncStorage.getItem(key)
+
+    return item !== null;
+  },
+
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
    * @param {String|Array} key A key or array of keys
@@ -27,8 +41,6 @@ const store = {
    * @return {Promise}
    */
   async save(key, value) {
-    console.log({ key, value });
-
     try {
       if (!Array.isArray(key)) {
         return await AsyncStorage.setItem(key, JSON.stringify(value));
@@ -50,11 +62,13 @@ const store = {
    * @param  {Value} value The value to update with
    * @return {Promise}
    */
-  update(key, value) {
-    return deviceStorage.get(key).then(item => {
-      value = typeof value === 'string' ? value : merge({}, item, value);
-      return AsyncStorage.setItem(key, JSON.stringify(value));
-    });
+  async update(key, value) {
+    const item = await AsyncStorage.get(key)
+
+    value = typeof value === 'string' ? value : Object.assign(item, value);
+
+    return AsyncStorage.setItem(key, JSON.stringify(value));
+
   },
 
   /**
@@ -71,31 +85,24 @@ const store = {
   },
 
   /**
-   * Get all keys in AsyncStorage.
-   * @return {Promise} A promise which when it resolves gets passed the saved keys in AsyncStorage.
-   */
-  keys() {
-    return AsyncStorage.getAllKeys();
-  },
-
-  /**
    * Push a value onto an array stored in AsyncStorage by key or create a new array in AsyncStorage for a key if it's not yet defined.
    * @param {String} key They key
    * @param {Any} value The value to push onto the array
    * @return {Promise}
    */
-  push(key, value) {
-    return deviceStorage.get(key).then((currentValue) => {
-      if (currentValue === null) {
-        // if there is no current value populate it with the new value
-        return deviceStorage.save(key, [value]);
-      }
-      if (Array.isArray(currentValue)) {
-        return deviceStorage.save(key, [...currentValue, value]);
-      }
-      throw new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`);
-    });
+  async push(key, value) {
+    const currentValue = await this.get(key)
+
+    if (currentValue === null) {
+      return await this.save(key, [value]);
+    }
+
+    if (Array.isArray(currentValue)) {
+      return await this.save(key, [...currentValue, value]);
+    }
+
+    throw new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`);
   },
 };
 
-export default store;
+export default LocalDatabase;
