@@ -1,10 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LocalDatabase = {
-  /**
-  * Get all keys in AsyncStorage.
-  * @return {Promise} A promise which when it resolves gets passed the saved keys in AsyncStorage.
-  */
   keys() {
     return AsyncStorage.getAllKeys();
   },
@@ -15,11 +11,6 @@ const LocalDatabase = {
     return item !== null;
   },
 
-  /**
-   * Get a one or more value for a key or array of keys from AsyncStorage
-   * @param {String|Array} key A key or array of keys
-   * @return {Promise}
-   */
   get(key) {
     if (!Array.isArray(key)) {
       return AsyncStorage.getItem(key).then(value => {
@@ -34,12 +25,6 @@ const LocalDatabase = {
     }
   },
 
-  /**
-   * Save a key value pair or a series of key value pairs to AsyncStorage.
-   * @param  {String|Array} key The key or an array of key/value pairs
-   * @param  {Any} value The value to save
-   * @return {Promise}
-   */
   async save(key, value) {
     try {
       if (!Array.isArray(key)) {
@@ -51,19 +36,12 @@ const LocalDatabase = {
         return await AsyncStorage.multiSet(pairs);
       }
     } catch (error) {
-      console.error(error);
-
+      console.error('LocalDatabase.save :>> ', error);
     }
   },
 
-  /**
-   * Updates the value in the store for a given key in AsyncStorage. If the value is a string it will be replaced. If the value is an object it will be deep merged.
-   * @param  {String} key The key
-   * @param  {Value} value The value to update with
-   * @return {Promise}
-   */
   async update(key, value) {
-    const item = await AsyncStorage.get(key)
+    const item = await this.get(key)
 
     value = typeof value === 'string' ? value : Object.assign(item, value);
 
@@ -71,11 +49,6 @@ const LocalDatabase = {
 
   },
 
-  /**
-   * Delete the value for a given key in AsyncStorage.
-   * @param  {String|Array} key The key or an array of keys to be deleted
-   * @return {Promise}
-   */
   delete(key) {
     if (Array.isArray(key)) {
       return AsyncStorage.multiRemove(key);
@@ -84,12 +57,6 @@ const LocalDatabase = {
     }
   },
 
-  /**
-   * Push a value onto an array stored in AsyncStorage by key or create a new array in AsyncStorage for a key if it's not yet defined.
-   * @param {String} key They key
-   * @param {Any} value The value to push onto the array
-   * @return {Promise}
-   */
   async push(key, value) {
     const currentValue = await this.get(key)
 
@@ -101,7 +68,7 @@ const LocalDatabase = {
       return await this.save(key, [...currentValue, value]);
     }
 
-    throw new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`);
+    console.error('LocalDatabase.push :>> ', new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`));
   },
 };
 
