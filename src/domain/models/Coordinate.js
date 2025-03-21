@@ -1,14 +1,14 @@
 import { Entity } from "./Entity";
 
 export class Coordinate extends Entity {
-  lapId = null;
+  trackId = null;
   latitude = 0;
   longitude = 0;
 
-  constructor(lapId, latitude, longitude) {
+  constructor(trackId, latitude, longitude) {
     super()
 
-    this.lapId = lapId
+    this.trackId = trackId
     this.latitude = latitude
     this.longitude = longitude
   }
