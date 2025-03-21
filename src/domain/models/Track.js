@@ -2,16 +2,18 @@ import { Entity } from "./Entity";
 
 export class Track extends Entity {
   name = '';
-  laps = []
+  date = new Date()
+  coordinates = []
 
-  constructor(name, laps) {
+  constructor(name, date, coordinates) {
     super()
 
-    this.name = name
-    this.laps = laps
+    this.name = name;
+    this.date = date;
+    this.coordinates = coordinates;
   }
 
-  addCoordinate(lap) {
-    this.laps.push(lap)
+  addCoordinate(coordinate) {
+    this.coordinates.push(coordinate)
   }
 }

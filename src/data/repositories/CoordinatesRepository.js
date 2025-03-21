@@ -14,9 +14,6 @@ export class CoordinatesRepository {
   }
 
   async addCoordinate(coordinate) {
-    if (!(await LocalDatabase.hasKey(this.#key)))
-      await this.create()
-
     return await LocalDatabase.push(this.#key, coordinate)
   }
 }

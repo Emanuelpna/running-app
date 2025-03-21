@@ -4,42 +4,37 @@ import {
   SafeAreaView,
   View,
   ActivityIndicator,
+  Pressable,
+  Text,
+  Button,
+  Alert,
 } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
+import { Link } from "expo-router";
 
 import * as Location from "expo-location";
 
-import { Lap } from "../../../domain/models/Lap";
 import { Track } from "../../../domain/models/Track";
 import { Coordinate } from "../../../domain/models/Coordinate";
 
-import { LapRepository } from "../../../data/repositories/LapRepository";
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
 import { CoordinatesRepository } from "../../../data/repositories/CoordinatesRepository";
 
 import { useWatchPosition } from "../../../infra/hooks/useWatchPosition";
-import { Button } from "react-native";
 
-const lapRepository = new LapRepository();
 const trackRepository = new TrackRepository();
 const coordinatesRepository = new CoordinatesRepository();
 
 export default function Index() {
-  const [location, setLocation] = useState({
-    latitude: -21.7608521,
-    longitude: -43.3506258,
-    latitudeDelta: 0.0062,
-    longitudeDelta: 0.0062,
-  });
-  const [errorMsg, setErrorMsg] = useState("");
-  const [laps, setLaps] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [location, setLocation] = useState(null);
 
   useEffect(() => {
     async function getCurrentLocation() {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        Alert.alert("Permission to access location was denied");
         return;
       }
 
@@ -57,20 +52,20 @@ export default function Index() {
           longitudeDelta: 0.0421,
         });
       } catch (error) {
-        console.error(error);
+        console.error("getCurrentPositionAsync :>> ", error);
       }
     }
 
     getCurrentLocation();
 
     (async () => {
-      const laps = await lapRepository.getAll();
+      const tracks = await trackRepository.getAll();
 
-      const validLaps = laps.filter(
-        (lap) => !!lap.id && lap.coordinates.length > 0
+      const validTracks = tracks.filter(
+        (track) => !!track.id && track.coordinates.length > 0
       );
 
-      setLaps(validLaps);
+      setTracks(validTracks);
     })();
   }, []);
 
@@ -78,15 +73,11 @@ export default function Index() {
     async () => {
       console.log("start");
       try {
-        const newTrack = new Track("Percurso 001", []);
+        const newTrack = new Track("Percurso 001", new Date(), []);
 
         await trackRepository.addTrack(newTrack);
-
-        const lap = new Lap(newTrack.id, new Date(), []);
-
-        await lapRepository.addLap(lap);
       } catch (error) {
-        console.error(error);
+        console.error("useWatchPosition.start :>> ", error);
       }
     },
     async (location) => {
@@ -97,20 +88,16 @@ export default function Index() {
 
         if (!track) return;
 
-        const laps = await lapRepository.getAllByTrackId(track.id);
-
-        const lastLap = laps.at(-1);
-
         const coords = new Coordinate(
-          lastLap.id,
+          track.id,
           location.coords.latitude,
           location.coords.longitude
         );
 
         await coordinatesRepository.addCoordinate(coords);
-        await lapRepository.addCoordinatesToLap(lastLap.id, coords);
+        await trackRepository.addCoordinate(track, coords);
       } catch (error) {
-        console.error(error);
+        console.error("useWatchPosition.locationUpdate :>> ", error);
       }
     }
   );
@@ -124,10 +111,16 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Link href="/new-track" asChild>
+        <Pressable>
+          <Text>Novo Trajeto</Text>
+        </Pressable>
+      </Link>
+
       <Button title="Começar" onPress={startWatching} />
       <Button title="Parar" onPress={stopWatching} />
       <MapView style={styles.map} initialRegion={location}>
-        {laps.map((lap) => (
+        {tracks.map((lap) => (
           <Polyline
             key={lap.id}
             coordinates={lap.coordinates}
