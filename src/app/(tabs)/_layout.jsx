@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function TabLayout() {
   return (
@@ -7,19 +7,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(home)/index"
         options={{
+          lazy: true,
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="home" color={color} />
+            <FontAwesome6 size={28} name="house" color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="(coords)/index"
+        name="(tracks)"
         options={{
           lazy: true,
-          title: "Coordinates",
+          title: "Tracks",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="map-marker" color={color} />
+            <FontAwesome6 size={28} name="person-running" color={color} />
           ),
         }}
       />
