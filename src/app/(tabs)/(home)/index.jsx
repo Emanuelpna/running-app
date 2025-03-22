@@ -85,7 +85,8 @@ export default function Index() {
 
       try {
         const track = await trackRepository.getByName("Percurso 001");
-
+        console.log(track);
+        
         if (!track) return;
 
         const coords = new Coordinate(
@@ -116,6 +117,12 @@ export default function Index() {
           <Text>Novo Trajeto</Text>
         </Pressable>
       </Link>
+      <Link href={{pathname:"/track-watcher", params:{}}} asChild>
+        <Pressable>
+          <Text>Rastreio de Trajeto</Text>
+        </Pressable>
+      </Link>
+      
 
       <Button title="Começar" onPress={startWatching} />
       <Button title="Parar" onPress={stopWatching} />
