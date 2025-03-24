@@ -8,15 +8,14 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Pressable,
-  Image
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons";
 
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
 
 const trackRepository = new TrackRepository();
-
 
 const TrackItem = ({ track, onPress }) => {
   // Calcular distância total do percurso (em km)
@@ -44,28 +43,29 @@ const TrackItem = ({ track, onPress }) => {
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
     return d;
   };
 
   const deg2rad = (deg) => {
-    return deg * (Math.PI/180);
+    return deg * (Math.PI / 180);
   };
 
-
   const formatDate = (date) => {
-    if (!date) return '';
+    if (!date) return "";
     const dateObj = new Date(date);
-    return dateObj.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return dateObj.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -76,7 +76,7 @@ const TrackItem = ({ track, onPress }) => {
     // Assumindo que as coordenadas têm um timestamp ou calculando aproximadamente
     const duration = 0;
     return duration > 60
-      ? `${Math.floor(duration/60)}h ${duration % 60}min`
+      ? `${Math.floor(duration / 60)}h ${duration % 60}min`
       : `${duration}min`;
   };
 
@@ -97,7 +97,9 @@ const TrackItem = ({ track, onPress }) => {
           </View>
           <View style={styles.statItem}>
             <FontAwesome5 name="map-pin" size={14} color="#666" />
-            <Text style={styles.statText}>{track.coordinates?.length || 0} pontos</Text>
+            <Text style={styles.statText}>
+              {track.coordinates?.length || 0} pontos
+            </Text>
           </View>
         </View>
       </View>
@@ -105,7 +107,6 @@ const TrackItem = ({ track, onPress }) => {
     </TouchableOpacity>
   );
 };
-
 
 const FloatingButton = ({ onPress }) => {
   return (
@@ -131,7 +132,7 @@ export default function TrackList() {
 
       // Filtrar para garantir que apenas trajetos válidos sejam exibidos
       const validTracks = allTracks.filter(
-        track => !!track.id && Array.isArray(track.coordinates)
+        (track) => !!track.id && Array.isArray(track.coordinates)
       );
 
       // Ordenar por data (mais recente primeiro)
@@ -149,15 +150,14 @@ export default function TrackList() {
     // Navegar para a tela de detalhes do trajeto
     router.push({
       pathname: "/(tabs)/(tracks)/track-details",
-      params: { trackId: track.id }
+      params: { trackId: track.id },
     });
   };
 
   const handleAddNewTrack = () => {
-    router.push("/(tabs)/(tracks)/track-watcher");
+    router.push("/(tabs)/(tracks)/new-track");
   };
 
- 
   const renderEmptyList = () => (
     <View style={styles.emptyContainer}>
       <FontAwesome5 name="route" size={60} color="#ccc" />
@@ -186,8 +186,12 @@ export default function TrackList() {
         <FlatList
           data={tracks}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TrackItem track={item} onPress={handleTrackPress} />}
-          contentContainerStyle={tracks.length === 0 ? { flex: 1 } : styles.list}
+          renderItem={({ item }) => (
+            <TrackItem track={item} onPress={handleTrackPress} />
+          )}
+          contentContainerStyle={
+            tracks.length === 0 ? { flex: 1 } : styles.list
+          }
           ListEmptyComponent={renderEmptyList}
           showsVerticalScrollIndicator={false}
         />
