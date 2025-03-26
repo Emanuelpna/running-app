@@ -7,9 +7,9 @@ export function useWatchPosition(onStartWatchingPosition, onPositionUpdate) {
   async function setPositionWatcher() {
     const newWatcher = await Location.watchPositionAsync(
       {
-        accuracy: Location.LocationAccuracy.Balanced,
+        accuracy: Location.LocationAccuracy.BestForNavigation,
         timeInterval: 1000,
-        distanceInterval: 5
+        // distanceInterval: 5
       },
       newLocation => {
         onPositionUpdate?.(newLocation)

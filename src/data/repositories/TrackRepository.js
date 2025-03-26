@@ -6,7 +6,9 @@ export class TrackRepository {
   #key = TRACK_COLLECTION_NAME
 
   async getAll() {
-    return await LocalDatabase.get(this.#key)
+    const tracks = await LocalDatabase.get(this.#key)
+
+    return tracks ?? []
   }
 
   async getById(id) {
