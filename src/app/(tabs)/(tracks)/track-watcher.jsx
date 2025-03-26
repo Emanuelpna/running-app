@@ -1,5 +1,13 @@
 import { useEffect, useState, useRef } from "react";
-import { StyleSheet, Text, SafeAreaView, View, Button, Alert, ActivityIndicator, } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  View,
+  Button,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import MapView, { Polyline } from "react-native-maps";
 import * as Location from "expo-location";
@@ -19,28 +27,31 @@ export default function TrackWatcher() {
   const { trackId } = useLocalSearchParams();
   const router = useRouter();
 
-  const [initialLocation, setInitialLocation] = useState(null)
-  const [isTracking, setIsTracking] = useState(false)
-  const [coordinates, setCoordinates] = useState([])
-  const [track, setTrack] = useState(null)
+  const [initialLocation, setInitialLocation] = useState(null);
+  const [isTracking, setIsTracking] = useState(false);
+  const [coordinates, setCoordinates] = useState([]);
+  const [track, setTrack] = useState(null);
 
-  const mapRef = useRef(null)
+  const mapRef = useRef(null);
 
   useEffect(() => {
     async function setUpTracking() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permissão negada", "Permissão para acessar a localização foi negada")
+        Alert.alert(
+          "Permissão negada",
+          "Permissão para acessar a localização foi negada"
+        );
         return;
       }
 
-      await Location.requestBackgroundPermissionsAsync()
+      await Location.requestBackgroundPermissionsAsync();
 
       try {
         const location = await Location.getCurrentPositionAsync({
           accuracy: Location.LocationAccuracy.Balanced,
         });
-        
+
         setInitialLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
@@ -52,30 +63,38 @@ export default function TrackWatcher() {
         Alert.alert("Erro", "Não foi possível obter sua localização atual");
       }
     }
-    
+
     setUpTracking();
   }, []);
 
   const { startWatching, stopWatching } = useWatchPosition(
     async () => {
-      try {  
+      try {
         let currentTrack;
-        
+
         if (trackId) {
           currentTrack = await trackRepository.getById(trackId);
           if (!currentTrack) {
             // Se o trackId não existir, criar um novo
-            currentTrack = new Track(`Trajeto ${new Date().toISOString()}`, new Date(), []);
+            currentTrack = new Track(
+              `Trajeto ${new Date().toISOString()}`,
+              new Date(),
+              []
+            );
             await trackRepository.addTrack(currentTrack);
           }
         } else {
-          currentTrack = new Track(`Trajeto ${new Date().toISOString()}`, new Date(), []);
+          currentTrack = new Track(
+            `Trajeto ${new Date().toISOString()}`,
+            new Date(),
+            []
+          );
           await trackRepository.addTrack(currentTrack);
         }
-        
+
         setTrack(currentTrack);
         setCoordinates(currentTrack.coordinates || []);
-        
+
         console.log("Rastreamento iniciado para trajeto:", currentTrack.id);
       } catch (error) {
         console.error("Erro ao iniciar rastreamento:", error);
@@ -94,17 +113,20 @@ export default function TrackWatcher() {
         await coordinatesRepository.addCoordinate(newCoord);
         await trackRepository.addCoordinate(track, newCoord);
 
-        setCoordinates(prevCoords => [...prevCoords, newCoord]);
+        setCoordinates((prevCoords) => [...prevCoords, newCoord]);
 
         if (mapRef.current) {
-          mapRef.current.animateToRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.0122,
-            longitudeDelta: 0.0121,
-          }, 500);
+          mapRef.current.animateToRegion(
+            {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.0122,
+              longitudeDelta: 0.0121,
+            },
+            500
+          );
         }
-        
+
         console.log("Nova coordenada registrada:", newCoord);
       } catch (error) {
         console.error("Erro ao atualizar coordenadas:", error);
@@ -124,19 +146,19 @@ export default function TrackWatcher() {
       "Rastreamento Finalizado",
       "O rastreamento foi finalizado com sucesso!",
       [
-        { 
-          text: "Ver Lista de Trajetos", 
-          onPress: () => router.push("/(tabs)/(tracks)") 
-        }
+        {
+          text: "Ver Lista de Trajetos",
+          onPress: () => router.push("/(tabs)/(tracks)"),
+        },
       ]
     );
   };
 
   if (initialLocation === null) {
     return (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#1e1eb1" />
-          </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1e1eb1" />
+      </View>
     );
   }
 
@@ -151,10 +173,10 @@ export default function TrackWatcher() {
           </View>
         )}
       </View>
-      
-      <MapView 
+
+      <MapView
         ref={mapRef}
-        style={styles.map} 
+        style={styles.map}
         initialRegion={initialLocation}
         showsUserLocation={true}
         followsUserLocation={isTracking}
@@ -167,18 +189,18 @@ export default function TrackWatcher() {
           />
         )}
       </MapView>
-      
+
       <View style={styles.buttonContainer}>
         {!isTracking ? (
-          <Button 
-            title="Iniciar Rastreamento" 
-            onPress={handleStartTracking} 
+          <Button
+            title="Iniciar Rastreamento"
+            onPress={handleStartTracking}
             color="#4CAF50"
           />
         ) : (
-          <Button 
-            title="Finalizar Rastreamento" 
-            onPress={handleStopTracking} 
+          <Button
+            title="Finalizar Rastreamento"
+            onPress={handleStopTracking}
             color="#F44336"
           />
         )}
@@ -241,5 +263,5 @@ const styles = StyleSheet.create({
   trackingText: {
     color: "red",
     fontWeight: "bold",
-  }
+  },
 });
