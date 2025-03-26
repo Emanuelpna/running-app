@@ -12,7 +12,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import MapView, { Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 
-import { Track } from "../../../domain/models/Track";
 import { Coordinate } from "../../../domain/models/Coordinate";
 
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
@@ -36,16 +35,14 @@ export default function TrackWatcher() {
 
   useEffect(() => {
     async function setUpTracking() {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permissão negada",
-          "Permissão para acessar a localização foi negada"
-        );
+      if (!trackId) {
+        Alert.alert("Erro", "Trajeto não existe");
         return;
       }
 
-      await Location.requestBackgroundPermissionsAsync();
+      const currentTrack = await trackRepository.getById(trackId);
+
+      setTrack(currentTrack);
 
       try {
         const location = await Location.getCurrentPositionAsync({
@@ -68,50 +65,19 @@ export default function TrackWatcher() {
   }, []);
 
   const { startWatching, stopWatching } = useWatchPosition(
-    async () => {
-      try {
-        let currentTrack;
-
-        if (trackId) {
-          currentTrack = await trackRepository.getById(trackId);
-          if (!currentTrack) {
-            // Se o trackId não existir, criar um novo
-            currentTrack = new Track(
-              `Trajeto ${new Date().toISOString()}`,
-              new Date(),
-              []
-            );
-            await trackRepository.addTrack(currentTrack);
-          }
-        } else {
-          currentTrack = new Track(
-            `Trajeto ${new Date().toISOString()}`,
-            new Date(),
-            []
-          );
-          await trackRepository.addTrack(currentTrack);
-        }
-
-        setTrack(currentTrack);
-        setCoordinates(currentTrack.coordinates || []);
-
-        console.log("Rastreamento iniciado para trajeto:", currentTrack.id);
-      } catch (error) {
-        console.error("Erro ao iniciar rastreamento:", error);
-        Alert.alert("Erro", "Não foi possível iniciar o rastreamento");
-      }
-    },
+    null,
     async (location) => {
       try {
-        if (!track) return;
+        const currentTrack = await trackRepository.getById(trackId);
+
         const newCoord = new Coordinate(
-          track.id,
+          currentTrack.id,
           location.coords.latitude,
           location.coords.longitude
         );
 
         await coordinatesRepository.addCoordinate(newCoord);
-        await trackRepository.addCoordinate(track, newCoord);
+        await trackRepository.addCoordinate(currentTrack, newCoord);
 
         setCoordinates((prevCoords) => [...prevCoords, newCoord]);
 
@@ -154,7 +120,7 @@ export default function TrackWatcher() {
     );
   };
 
-  if (initialLocation === null) {
+  if (track === null && initialLocation === null) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#1e1eb1" />
@@ -165,7 +131,7 @@ export default function TrackWatcher() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Rastreamento em Tempo Real</Text>
+        <Text style={styles.title}>{track?.name}</Text>
         {isTracking && (
           <View style={styles.trackingIndicator}>
             <View style={styles.trackingDot} />
@@ -184,7 +150,7 @@ export default function TrackWatcher() {
         {coordinates.length > 0 && (
           <Polyline
             coordinates={coordinates}
-            strokeColor="#FF0000"
+            strokeColor="#e01d47"
             strokeWidth={4}
           />
         )}
@@ -195,13 +161,13 @@ export default function TrackWatcher() {
           <Button
             title="Iniciar Rastreamento"
             onPress={handleStartTracking}
-            color="#4CAF50"
+            color="#25b329"
           />
         ) : (
           <Button
             title="Finalizar Rastreamento"
             onPress={handleStopTracking}
-            color="#F44336"
+            color="#ce2216"
           />
         )}
       </View>

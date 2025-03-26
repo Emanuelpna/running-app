@@ -1,0 +1,25 @@
+{
+  "id": "74b73af5-3b10-4954-acee-2dbf741cd54c",
+  "date": "2025-03-26T18:27:03.656Z",
+  "name": "Trajeto Exemplo",
+  "coordinates": [
+    {
+      "id": "a6e49813-e0ae-4906-8136-863ff69ebc89",
+      "latitude": -21.7654601,
+      "longitude": -43.3536647,
+      "trackId": "74b73af5-3b10-4954-acee-2dbf741cd54c"
+    },
+    {
+      "id": "446b7a30-c554-45e4-a3c5-644a55bcbba7",
+      "latitude": -21.7659049,
+      "longitude": -43.3537486,
+      "trackId": "74b73af5-3b10-4954-acee-2dbf741cd54c"
+    },
+    {
+      "id": "0d23b8d3-be0b-45c4-890e-e31a34788bab",
+      "latitude": -21.7663088,
+      "longitude": -43.3539676,
+      "trackId": "74b73af5-3b10-4954-acee-2dbf741cd54c"
+    }
+  ]
+}
