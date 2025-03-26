@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { 
-  StyleSheet, 
-  SafeAreaView, 
-  View, 
-  Text, 
-  TouchableOpacity, 
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
   Share,
-  Alert
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import MapView, { Polyline, Marker } from "react-native-maps";
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons";
 
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
 
@@ -31,13 +31,13 @@ export default function TrackDetails() {
   const loadTrackDetails = async () => {
     try {
       setLoading(true);
-      
+
       // Buscar o trajeto específico pelo ID
       const selectedTrack = await trackRepository.getById(trackId);
-      
+
       if (!selectedTrack) {
         Alert.alert(
-          "Trajeto não encontrado", 
+          "Trajeto não encontrado",
           "Não foi possível carregar os detalhes do trajeto.",
           [{ text: "Voltar", onPress: () => router.back() }]
         );
@@ -58,11 +58,9 @@ export default function TrackDetails() {
       }
     } catch (error) {
       console.error("Erro ao carregar detalhes do trajeto:", error);
-      Alert.alert(
-        "Erro", 
-        "Não foi possível carregar os detalhes do trajeto.",
-        [{ text: "Voltar", onPress: () => router.back() }]
-      );
+      Alert.alert("Erro", "Não foi possível carregar os detalhes do trajeto.", [
+        { text: "Voltar", onPress: () => router.back() },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -71,50 +69,52 @@ export default function TrackDetails() {
   // Calcular distância total do percurso (em km)
   const calculateDistance = (coordinates) => {
     if (!coordinates || coordinates.length < 2) return 0;
-    
+
     let totalDistance = 0;
     for (let i = 0; i < coordinates.length - 1; i++) {
       const start = coordinates[i];
       const end = coordinates[i + 1];
       totalDistance += getDistanceFromLatLonInKm(
-        start.latitude, 
-        start.longitude, 
-        end.latitude, 
+        start.latitude,
+        start.longitude,
+        end.latitude,
         end.longitude
       );
     }
-    
+
     return totalDistance.toFixed(2);
   };
-  
+
   // Fórmula de Haversine para calcular distância entre coordenadas
   const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
     return d;
   };
-  
+
   const deg2rad = (deg) => {
-    return deg * (Math.PI/180);
+    return deg * (Math.PI / 180);
   };
 
   // Formatar data para exibição
   const formatDate = (date) => {
-    if (!date) return '';
+    if (!date) return "";
     const dateObj = new Date(date);
-    return dateObj.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return dateObj.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -122,14 +122,15 @@ export default function TrackDetails() {
   const shareTrackDetails = async () => {
     try {
       const distance = calculateDistance(track.coordinates);
-      const shareMessage = `Meu trajeto de ${track.name} em ${formatDate(track.date)}:\n` +
+      const shareMessage =
+        `Meu trajeto de ${track.name} em ${formatDate(track.date)}:\n` +
         `📍 Distância: ${distance} km\n` +
         `📅 Data: ${formatDate(track.date)}\n` +
         `📍 Número de pontos: ${track.coordinates.length}`;
-      
+
       await Share.share({
         message: shareMessage,
-        title: `Detalhes do Trajeto - ${track.name}`
+        title: `Detalhes do Trajeto - ${track.name}`,
       });
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
@@ -148,18 +149,24 @@ export default function TrackDetails() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
           <FontAwesome5 name="arrow-left" size={20} color="#1e1eb1" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{track.name}</Text>
-        <TouchableOpacity onPress={shareTrackDetails} style={styles.shareButton}>
+        <TouchableOpacity
+          onPress={shareTrackDetails}
+          style={styles.shareButton}
+        >
           <FontAwesome5 name="share" size={20} color="#1e1eb1" />
         </TouchableOpacity>
       </View>
 
       {mapRegion && (
-        <MapView 
-          style={styles.map} 
+        <MapView
+          style={styles.map}
           initialRegion={mapRegion}
           showsUserLocation={false}
         >
@@ -203,9 +210,7 @@ export default function TrackDetails() {
         <View style={styles.statRow}>
           <View style={styles.statItem}>
             <FontAwesome5 name="calendar" size={20} color="#1e1eb1" />
-            <Text style={styles.statLabel}>
-              Data: {formatDate(track.date)}
-            </Text>
+            <Text style={styles.statLabel}>Data: {formatDate(track.date)}</Text>
           </View>
         </View>
       </View>

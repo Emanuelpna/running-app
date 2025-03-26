@@ -6,25 +6,25 @@ export default function TracksLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Tracks",
+          title: "Meus Trajetos",
         }}
       />
       <Stack.Screen
         name="track-watcher"
         options={{
-          title: "Track Watcher",
+          title: "Rastreamento em Tempo Real",
         }}
       />
       <Stack.Screen
         name="new-track"
         options={{
-          title: "New Track",
+          title: "Novo Trajeto",
         }}
       />
       <Stack.Screen
         name="track-details"
         options={{
-          title: "Track",
+          title: "Detalhes de um Trajeto",
         }}
       />
     </Stack>
