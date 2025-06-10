@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  SafeAreaView,
   View,
   Text,
   FlatList,
+  Pressable,
+  StyleSheet,
+  SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
-  Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
+
+import { useStepCounter } from "../../../infra/hooks/useStepCounter";
 
 const trackRepository = new TrackRepository();
 
@@ -167,6 +169,9 @@ export default function TrackList() {
     </View>
   );
 
+  const { currentStepCount, isPedometerAvailable, pastStepCount } =
+    useStepCounter();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -174,6 +179,12 @@ export default function TrackList() {
         <Pressable style={styles.refreshButton} onPress={loadTracks}>
           <FontAwesome5 name="sync" size={18} color="#1e1eb1" />
         </Pressable>
+      </View>
+
+      <View>
+        <Text>{isPedometerAvailable + ""}</Text>
+        <Text>{currentStepCount}</Text>
+        <Text>{pastStepCount}</Text>
       </View>
 
       {loading ? (
