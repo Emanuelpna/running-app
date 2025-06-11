@@ -169,24 +169,8 @@ export default function TrackList() {
     </View>
   );
 
-  const { currentStepCount, isPedometerAvailable, pastStepCount } =
-    useStepCounter();
-
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Meus Trajetos</Text>
-        <Pressable style={styles.refreshButton} onPress={loadTracks}>
-          <FontAwesome5 name="sync" size={18} color="#1e1eb1" />
-        </Pressable>
-      </View>
-
-      <View>
-        <Text>{isPedometerAvailable + ""}</Text>
-        <Text>{currentStepCount}</Text>
-        <Text>{pastStepCount}</Text>
-      </View>
-
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1e1eb1" />
@@ -195,6 +179,8 @@ export default function TrackList() {
       ) : (
         <FlatList
           data={tracks}
+          refreshing={loading}
+          onRefresh={loadTracks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TrackItem track={item} onPress={handleTrackPress} />

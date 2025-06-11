@@ -17,6 +17,7 @@ import { Coordinate } from "../../../domain/models/Coordinate";
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
 import { CoordinatesRepository } from "../../../data/repositories/CoordinatesRepository";
 
+import { useStepCounter } from "../../../infra/hooks/useStepCounter";
 import { useWatchPosition } from "../../../infra/hooks/useWatchPosition";
 
 const trackRepository = new TrackRepository();
@@ -32,6 +33,8 @@ export default function TrackWatcher() {
   const [track, setTrack] = useState(null);
 
   const mapRef = useRef(null);
+
+  const { currentStepCount, isPedometerAvailable } = useStepCounter();
 
   useEffect(() => {
     async function setUpTracking() {
@@ -107,7 +110,12 @@ export default function TrackWatcher() {
 
   const handleStopTracking = async () => {
     await stopWatching();
+
+    const currentTrack = await trackRepository.getById(trackId);
+    await trackRepository.addStepCount(currentTrack, currentStepCount);
+
     setIsTracking(false);
+
     Alert.alert(
       "Rastreamento Finalizado",
       "O rastreamento foi finalizado com sucesso!",
@@ -136,6 +144,8 @@ export default function TrackWatcher() {
           <View style={styles.trackingIndicator}>
             <View style={styles.trackingDot} />
             <Text style={styles.trackingText}>Rastreando...</Text>
+
+            <Text style={styles.stepCountText}>{currentStepCount} passos</Text>
           </View>
         )}
       </View>
@@ -229,5 +239,9 @@ const styles = StyleSheet.create({
   trackingText: {
     color: "red",
     fontWeight: "bold",
+  },
+  stepCountText: {
+    fontWeight: "bold",
+    textAlign: "right",
   },
 });

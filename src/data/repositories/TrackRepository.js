@@ -49,4 +49,10 @@ export class TrackRepository {
 
     return await this.update(track)
   }
+
+  async addStepCount(track, stepCount) {
+    track.stepCount = stepCount
+
+    return await this.update(track)
+  }
 }
