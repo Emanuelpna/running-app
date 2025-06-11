@@ -148,22 +148,6 @@ export default function TrackDetails() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <FontAwesome5 name="arrow-left" size={20} color="#1e1eb1" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{track.name}</Text>
-        <TouchableOpacity
-          onPress={shareTrackDetails}
-          style={styles.shareButton}
-        >
-          <FontAwesome5 name="share" size={20} color="#1e1eb1" />
-        </TouchableOpacity>
-      </View>
-
       {mapRegion && (
         <MapView
           style={styles.map}
@@ -206,11 +190,23 @@ export default function TrackDetails() {
               Pontos: {track.coordinates.length}
             </Text>
           </View>
+
+          <TouchableOpacity
+            onPress={shareTrackDetails}
+            style={styles.shareButton}
+          >
+            <FontAwesome5 name="share" size={20} color="#1e1eb1" />
+          </TouchableOpacity>
         </View>
+
         <View style={styles.statRow}>
           <View style={styles.statItem}>
             <FontAwesome5 name="calendar" size={20} color="#1e1eb1" />
             <Text style={styles.statLabel}>Data: {formatDate(track.date)}</Text>
+          </View>
+          <View style={styles.statItem}>
+            <FontAwesome5 name="running" size={20} color="#1e1eb1" />
+            <Text style={styles.statLabel}>{track.stepCount} passos</Text>
           </View>
         </View>
       </View>
