@@ -14,6 +14,17 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="(analytics)"
+        options={{
+          title: "Meus Desempenho",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome6 size={28} name="chart-line" color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

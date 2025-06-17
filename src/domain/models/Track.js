@@ -4,13 +4,14 @@ export class Track extends Entity {
   name = '';
   stepCount = 0
   coordinates = []
-  date = new Date()
+  startDate = new Date()
+  finishDate = null
 
-  constructor(name, date, coordinates = [], stepCount = 0) {
+  constructor(name, startDate, coordinates = [], stepCount = 0) {
     super()
 
     this.name = name;
-    this.date = date;
+    this.startDate = startDate;
     this.coordinates = coordinates;
     this.stepCount = stepCount
   }

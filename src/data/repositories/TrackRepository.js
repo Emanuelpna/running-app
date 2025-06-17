@@ -55,4 +55,10 @@ export class TrackRepository {
 
     return await this.update(track)
   }
+
+  async addFinishTrackDate(track) {
+    track.finishDate = new Date()
+
+    return await this.update(track)
+  }
 }

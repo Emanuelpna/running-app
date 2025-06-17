@@ -112,6 +112,8 @@ export default function TrackWatcher() {
     await stopWatching();
 
     const currentTrack = await trackRepository.getById(trackId);
+
+    await trackRepository.addFinishTrackDate(currentTrack);
     await trackRepository.addStepCount(currentTrack, currentStepCount);
 
     setIsTracking(false);
