@@ -123,9 +123,9 @@ export default function TrackDetails() {
     try {
       const distance = calculateDistance(track.coordinates);
       const shareMessage =
-        `Meu trajeto de ${track.name} em ${formatDate(track.date)}:\n` +
+        `Meu trajeto de ${track.name} em ${formatDate(track.startDate)}:\n` +
         `📍 Distância: ${distance} km\n` +
-        `📅 Data: ${formatDate(track.date)}\n` +
+        `📅 Data: ${formatDate(track.startDate)}\n` +
         `📍 Número de pontos: ${track.coordinates.length}`;
 
       await Share.share({
@@ -202,7 +202,9 @@ export default function TrackDetails() {
         <View style={styles.statRow}>
           <View style={styles.statItem}>
             <FontAwesome5 name="calendar" size={20} color="#1e1eb1" />
-            <Text style={styles.statLabel}>Data: {formatDate(track.date)}</Text>
+            <Text style={styles.statLabel}>
+              Data: {formatDate(track.startDate)}
+            </Text>
           </View>
           <View style={styles.statItem}>
             <FontAwesome5 name="running" size={20} color="#1e1eb1" />

@@ -90,7 +90,7 @@ const TrackItem = ({ track, onPress }) => {
       </View>
       <View style={styles.trackInfo}>
         <Text style={styles.trackName}>{track.name}</Text>
-        <Text style={styles.trackDate}>{formatDate(track.date)}</Text>
+        <Text style={styles.trackDate}>{formatDate(track.startDate)}</Text>
         <View style={styles.trackStats}>
           <View style={styles.statItem}>
             <FontAwesome5 name="ruler" size={14} color="#666" />
