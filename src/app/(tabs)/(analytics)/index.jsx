@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, ScrollView, Text, Dimensions, StyleSheet } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  Dimensions,
+  StyleSheet,
+  Button,
+} from "react-native";
 import { BarChart, ContributionGraph } from "react-native-chart-kit";
 
 import { MONTHS_DICT } from "../../../domain/months";
@@ -7,7 +14,7 @@ import { MONTHS_DICT } from "../../../domain/months";
 import { TrackReports } from "../../../data/reports/TrackReports";
 import { TrackRepository } from "../../../data/repositories/TrackRepository";
 
-const PAGE_PADDING = 10;
+const PAGE_PADDING = 12;
 
 const trackRepository = new TrackRepository();
 
@@ -73,7 +80,10 @@ export default function AnalyticsHome() {
   useEffect(() => {
     async function get() {
       const trackReports = new TrackReports(trackRepository);
+
       const pace = await trackReports.getAveragePace();
+
+      console.log({ pace });
 
       setAveragePace(pace);
     }
@@ -83,7 +93,10 @@ export default function AnalyticsHome() {
 
   return (
     <ScrollView style={styles.layout}>
-      <Text>Pace Médio: {averagePace}</Text>
+      <View style={styles.chartContainer}>
+        <Text style={styles.chartTitle}>Pace Médio</Text>
+        <Text style={styles.averagePace}>{averagePace}/km</Text>
+      </View>
 
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Corridas por mês</Text>
@@ -119,6 +132,13 @@ const styles = StyleSheet.create({
   layout: {
     padding: PAGE_PADDING,
   },
+  averagePace: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginLeft: 14,
+    marginBottom: 24,
+    color: "#120C1F",
+  },
   chartTitle: {
     marginLeft: 14,
     marginTop: 16,
@@ -128,9 +148,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     backgroundColor: "white",
     borderRadius: 32,
-    shadowColor: "#171717",
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    overflow: "hidden",
+    elevation: 2,
   },
 });

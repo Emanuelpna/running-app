@@ -41,7 +41,9 @@ export class TrackReports {
     const paces = tracks.map(track => {
       const distance = distanceCalculator.calculateDistance(track.coordinates)
 
-      const totalTimeInMiliseconds = track.finishDate.getTime() - track.startDate.getTime()
+      if (distance <= 0) return 0
+
+      const totalTimeInMiliseconds = new Date(track.finishDate).getTime() - new Date(track.startDate).getTime()
 
       const totalTimeInMinutes = totalTimeInMiliseconds / 1000 / 60
 
@@ -52,6 +54,11 @@ export class TrackReports {
 
     const averagePace = paces.reduce((acc, curr) => acc + curr, 0) / paces.length;
 
+    const paceInSeconds = averagePace * 60
 
+    const minutesPortionOfPace = Math.floor(paceInSeconds / 60)
+    const secondsPortionOfPace = Math.round(paceInSeconds % 60)
+
+    return `${minutesPortionOfPace}"${secondsPortionOfPace}'`
   }
 }
